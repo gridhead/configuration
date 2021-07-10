@@ -1,4 +1,4 @@
-# Pulling Docker Images on Ubuntu host
+# Pulling Docker images on Ubuntu host
 
 1. Clone the repo to your local storage and make the `pulling-docker-images-on-ubuntu-host` directory your current working directory.
 2. Make changes to `prepbook.yml` according to your preferences to reflect the changes in `hostaddr`, `username`, `imejlist` and `servlist` variables.
@@ -12,5 +12,5 @@
     ```
 4. Two new files would be generated as a result, so execute the following command to actually start pulling images from DockerHub.
     ```
-    ansible-playbook -i inventory.ini pullplay.yml -vvv
+    ansible-playbook -i register.ini pullplay.yml -vvv
     ```
