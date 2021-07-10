@@ -1,0 +1,32 @@
+- name: "Establish template"
+  hosts: "127.0.0.1"
+  vars:
+    hostaddr: "server1"
+    username: "t0xic0der"
+    imejlist: [
+      "linuxserver/plex:latest",
+      "linuxserver/code-server:latest",
+      "fedora:latest",
+      "gitea/gitea:latest",
+      "ubuntu:latest",
+      "portainer/portainer-ce:latest",
+      "centos:latest"
+    ]
+    servlist: [
+      {
+        "ansible_host": "192.168.0.114",
+        "ansible_port": "2222",
+        "ansible_ssh_user": "t0xic0der",
+        "ansible_ssh_pass": "password",
+        "ansible_sudo_pass": "password"
+      }
+    ]
+  tasks:
+    - name: "Setting the variables in the playbook template"
+      template:
+        src: "pull.template.j2"
+        dest: "pullplay.yml"
+    - name: "Setting the variables in the inventory template"
+      template:
+        src: "invt.template.j2"
+        dest: "inventory.ini"

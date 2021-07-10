@@ -1,0 +1,18 @@
+- name: "Pull listed Docker images from DockerHub on Ubuntu host"
+  hosts: "{{ hostaddr }}"
+  remote_user: "{{ username }}"
+  become: yes
+  become_method: "sudo"
+  become_user: "root"
+  tasks:
+    - name: "STEP 0 - Install python3-docker on the remote machine first"
+      apt:
+        update_cache: "yes"
+        name: "python3-docker"
+        state: "latest"
+  {% for imejname in imejlist %}
+  - name: "STEP {{ loop.index }} - Pull {{ imejname }} from DockerHub"
+      community.docker.docker_image:
+        name: "{{ imejname }}"
+        source: "pull"
+  {% endfor %}
