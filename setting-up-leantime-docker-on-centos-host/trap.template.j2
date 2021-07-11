@@ -1,0 +1,49 @@
+- name: "Setting up Leantime Docker on CentOS host"
+  hosts: "{{ hostaddr }}"
+  remote_user: "{{ username }}"
+  become: yes
+  become_method: "sudo"
+  become_user: "root"
+  tasks:
+    - name: "STEP 1 - Install python3-docker on the remote machine first"
+      dnf:
+        name: "python3-docker"
+        state: "latest"
+    - name: "STEP 2 - Pull leantime/leantime:latest from DockerHub"
+      community.docker.docker_image:
+        name: "leantime/leantime:latest"
+        source: "pull"
+    - name: "STEP 3 - Pull mysql:5.7 from DockerHub"
+      community.docker.docker_image:
+        name: "mysql:5.7"
+        source: "pull"
+    - name: "STEP 4 - Create a network for Leantime and MySQL containers"
+      community.docker.docker_network:
+        name: "{{ ntwkname }}"
+    - name: "STEP 5 - Configure and start the MySQL container"
+      community.docker.docker_container:
+        name: "{{ database_hostname }}"
+        image: "mysql:5.7"
+        ports:
+          - "{{ database_port }}:3306"
+        networks:
+          - name: "{{ ntwkname }}"
+        env:
+          MYSQL_ROOT_PASSWORD: "{{ database_rootpass }}"
+          MYSQL_DATABASE: "{{ database_name }}"
+          MYSQL_USER: "{{ database_user }}"
+          MYSQL_PASSWORD: "{{ database_userpass }}"
+        command: "--character-set-server=utf8 --collation-server=utf8_unicode_ci"
+    - name: "STEP 6 - Configure and start the Leantime container"
+      community.docker.docker_container:
+        name: "{{ leantime_hostname }}"
+        image: "leantime/leantime:latest"
+        ports:
+          - "{{ leantime_port }}:80"
+        networks:
+          - name: "{{ ntwkname }}"
+        env:
+          LEAN_DB_HOST: "{{ database_hostname }}"
+          LEAN_DB_USER: "{{ database_user }}"
+          LEAN_DB_PASSWORD: "{{ database_userpass }}"
+          LEAN_DB_DATABASE: "{{ database_name }}"
