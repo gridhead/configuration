@@ -10,7 +10,7 @@
     ```
     ansible-galaxy collection install community.docker
     ```
-4. Two new files would be generated as a result, so execute the following command to actually start pulling images from DockerHub.
+5. Two new files would be generated as a result, so execute the following command to actually start pulling images from DockerHub.
     ```
     ansible-playbook -i register.ini pullplay.yml -vvv
     ```
