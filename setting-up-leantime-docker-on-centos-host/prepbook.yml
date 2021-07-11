@@ -1,0 +1,32 @@
+- name: "Establish template"
+  hosts: "127.0.0.1"
+  vars:
+    hostaddr: "server1"
+    username: "root"
+    servlist: [
+      {
+        "ansible_host": "192.168.0.114",
+        "ansible_port": "2323",
+        "ansible_ssh_user": "root",
+        "ansible_ssh_pass": "password",
+        "ansible_sudo_pass": "password"
+      }
+    ]
+    database_port: "3306"
+    leantime_port: "9898"
+    database_hostname: "leanbase"
+    leantime_hostname: "leantime"
+    database_name: "leanbase"
+    database_user: "leanuser"
+    database_rootpass: "leanroot"
+    database_userpass: "leanpswd"
+    ntwkname: "leanntwk"
+  tasks:
+    - name: "Setting the variables in the playbook template"
+      template:
+        src: "trap.template.j2"
+        dest: "trapplay.yml"
+    - name: "Setting the variables in the inventory template"
+      template:
+        src: "invt.template.j2"
+        dest: "register.ini"
