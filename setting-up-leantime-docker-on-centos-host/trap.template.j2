@@ -24,6 +24,7 @@
       community.docker.docker_container:
         name: "{{ database_hostname }}"
         image: "mysql:5.7"
+        restart_policy: "always"
         ports:
           - "{{ database_port }}:3306"
         networks:
@@ -38,6 +39,7 @@
       community.docker.docker_container:
         name: "{{ leantime_hostname }}"
         image: "leantime/leantime:latest"
+        restart_policy: "always"
         ports:
           - "{{ leantime_port }}:80"
         networks:
