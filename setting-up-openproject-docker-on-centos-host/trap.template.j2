@@ -1,0 +1,34 @@
+- name: "Setting up OpenProject Docker on CentOS host"
+  hosts: "{{ hostaddr }}"
+  remote_user: "{{ username }}"
+  become: yes
+  become_method: "sudo"
+  become_user: "root"
+  tasks:
+    - name: "STEP 1 - Install python3-docker on the remote machine first"
+      dnf:
+        name: "python3-docker"
+        state: "latest"
+    - name: "STEP 2 - Pull openproject/community:11 from DockerHub"
+      community.docker.docker_image:
+        name: "openproject/community:11"
+        source: "pull"
+    - name: "STEP 3 - Make directories for storing OpenProject data"
+      file:
+        path: "{{ openpjct_pgdata }}"
+        state: "directory"
+      file:
+        path: "{{ openpjct_assets }}"
+        state: "directory"
+    - name: "STEP 4 - Configure and start the OpenProject container"
+      community.docker.docker_container:
+        name: "{{ openpjct_hostname }}"
+        image: "openproject/community:11"
+        restart_policy: "always"
+        ports:
+          - "{{ openpjct_port }}:80"
+        volumes:
+          - "{{ openpjct_pgdata }}:/var/openproject/pgdata"
+          - "{{ openpjct_assets }}:/var/openproject/assets"
+        env:
+          SECRET_KEY_BASE: "{{ passhash }}"
