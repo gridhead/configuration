@@ -23,4 +23,9 @@
 7. Once the container is configured and started, open up `http://<ansible_host>:<openpjct_port>/` (or `http://192.168.0.114:9999/` if nothing was changed) using a web browser of your choice on a device connected to the same network as that of the server.
 8. Fill out the form as shown below to create your first user.
     ![](openpjct.png)
-9. Log in using the credentials provided in the form to get started with using OpenProject.
+9. Log in using the following credentials and you would be soon asked to change the administrator password.
+    ```
+    Username: admin
+    Password: admin
+    ```
+10. After logging into the `admin` account, authorize the newly created user from the step #8 to allow that user to log in and get started with using OpenProject.
