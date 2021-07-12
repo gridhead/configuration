@@ -1,0 +1,22 @@
+- name: "Setting up Focalboard Docker on CentOS host"
+  hosts: "{{ hostaddr }}"
+  remote_user: "{{ username }}"
+  become: yes
+  become_method: "sudo"
+  become_user: "root"
+  tasks:
+    - name: "STEP 1 - Install python3-docker on the remote machine first"
+      dnf:
+        name: "python3-docker"
+        state: "latest"
+    - name: "STEP 2 - Pull mattermost/focalboard:latest from DockerHub"
+      community.docker.docker_image:
+        name: "mattermost/focalboard:{{ foclbord_vers }}"
+        source: "pull"
+    - name: "STEP 3 - Configure and start the Focalboard container"
+      community.docker.docker_container:
+        name: "{{ foclbord_hostname }}"
+        image: "mattermost/focalboard:{{ foclbord_vers }}"
+        restart_policy: "always"
+        ports:
+          - "{{ foclbord_port }}:8000"

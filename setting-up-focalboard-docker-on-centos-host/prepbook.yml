@@ -1,0 +1,26 @@
+- name: "Establish template"
+  hosts: "127.0.0.1"
+  vars:
+    hostaddr: "server1"
+    username: "root"
+    servlist: [
+      {
+        "ansible_host": "192.168.0.114",
+        "ansible_port": "2323",
+        "ansible_ssh_user": "root",
+        "ansible_ssh_pass": "password",
+        "ansible_sudo_pass": "password"
+      }
+    ]
+    foclbord_hostname: "focalboard"
+    foclbord_port: "8989"
+    foclbord_vers: "0.6.7"
+  tasks:
+    - name: "Setting the variables in the playbook template"
+      template:
+        src: "trap.template.j2"
+        dest: "trapplay.yml"
+    - name: "Setting the variables in the inventory template"
+      template:
+        src: "invt.template.j2"
+        dest: "register.ini"
