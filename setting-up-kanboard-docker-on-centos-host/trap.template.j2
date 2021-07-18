@@ -1,0 +1,34 @@
+- name: "Setting up Kanboard Docker on CentOS host"
+  hosts: "{{ hostaddr }}"
+  remote_user: "{{ username }}"
+  become: yes
+  become_method: "sudo"
+  become_user: "root"
+  tasks:
+    - name: "STEP 1 - Install python3-docker on the remote machine first"
+      dnf:
+        name: "python3-docker"
+        state: "latest"
+    - name: "STEP 2 - Pull kanboard/kanboard:latest from DockerHub"
+      community.docker.docker_image:
+        name: "kanboard/kanboard:latest"
+        source: "pull"
+    - name: "STEP 3 - Make volumes for storing Kanboard data"
+      community.docker.docker_volume:
+        name: "{{ kanboard_datavolm }}"
+      community.docker.docker_volume:
+        name: "{{ kanboard_plgnvolm }}"
+      community.docker.docker_volume:
+        name: "{{ kanboard_ssldvolm }}"
+    - name: "STEP 4 - Configure and start the Kanboard container"
+      community.docker.docker_container:
+        name: "{{ kanboard_hostname }}"
+        image: "kanboard/kanboard:latest"
+        restart_policy: "always"
+        ports:
+          - "{{ kanboard_porthttp }}:80"
+          - "{{ kanboard_porttlsd }}:443"
+        volumes:
+          - "{{ kanboard_datavolm }}:/var/www/app/data"
+          - "{{ kanboard_plgnvolm }}:/var/www/app/plugins"
+          - "{{ kanboard_ssldvolm }}:/etc/nginx/ssl"
