@@ -1,0 +1,29 @@
+- name: "Establish template"
+  hosts: "127.0.0.1"
+  vars:
+    hostaddr: "server1"
+    username: "root"
+    servlist: [
+      {
+        "ansible_host": "192.168.0.114",
+        "ansible_port": "2323",
+        "ansible_ssh_user": "root",
+        "ansible_ssh_pass": "password",
+        "ansible_sudo_pass": "password"
+      }
+    ]
+    kanboard_datavolm: "kanboard_datavolm"
+    kanboard_plgnvolm: "kanboard_plgnvolm"
+    kanboard_ssldvolm: "kanboard_ssldvolm"
+    kanboard_hostname: "kanboard"
+    kanboard_porthttp: "8181"
+    kanboard_porttlsd: "4343"
+  tasks:
+    - name: "Setting the variables in the playbook template"
+      template:
+        src: "trap.template.j2"
+        dest: "trapplay.yml"
+    - name: "Setting the variables in the inventory template"
+      template:
+        src: "invt.template.j2"
+        dest: "register.ini"
