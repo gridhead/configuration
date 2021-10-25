@@ -1,17 +1,28 @@
 - name: "Pulling Docker images on CentOS host"
   hosts: "{{ hostaddr }}"
   remote_user: "{{ username }}"
-  become: yes
+  become: "yes"
   become_method: "sudo"
   become_user: "root"
   tasks:
-    - name: "STEP 0 - Install python3-docker on the remote machine first"
+    - name: "STEP -1 - Install python3-pip on the remote machine"
       dnf:
-        name: "python3-docker"
+        name: "python3-pip"
         state: "latest"
-  {% for imejname in imejlist %}
-  - name: "STEP {{ loop.index }} - Pull {{ imejname }} from DockerHub"
+    - name: "STEP 0 - Install docker-py using pip"
+      pip:
+        name: "docker-py"
+{% for imejname in imejlist %}
+    - name: "STEP {{ loop.index }} - Pull {{ imejname }} from DockerHub"
       community.docker.docker_image:
         name: "{{ imejname }}"
         source: "pull"
-  {% endfor %}
+{% endfor %}
+    - name: "STEP n-1 - Remove docker-py using pip"
+      pip:
+        name: "docker-py"
+        state: "absent"
+    - name: "STEP n - Remove python3-pip from the remote machine"
+      dnf:
+        name: "python3-pip"
+        state: "absent"
