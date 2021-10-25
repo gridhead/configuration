@@ -1,0 +1,23 @@
+- name: "Establish template"
+  hosts: "127.0.0.1"
+  vars:
+    hostaddr: "server1"
+    username: "root"
+    servlist: [
+      {
+        "ansible_host": "192.168.29.152",
+        "ansible_port": "22",
+        "ansible_ssh_user": "centos8s-slvb",
+        "ansible_ssh_pass": "password",
+        "ansible_sudo_pass": "password"
+      },
+    ]
+  tasks:
+    - name: "Setting the variables in the playbook template"
+      template:
+        src: "inst.template.j2"
+        dest: "instplay.yml"
+    - name: "Setting the variables in the inventory template"
+      template:
+        src: "invt.template.j2"
+        dest: "register.ini"
