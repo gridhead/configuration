@@ -1,0 +1,8 @@
+[homelabs]
+{% for servindx in servlist %}
+server{{ loop.index }} ansible_host={{ servindx["ansible_host"] }}
+server{{ loop.index }} ansible_port={{ servindx["ansible_port"] }}
+server{{ loop.index }} ansible_ssh_user={{ servindx["ansible_ssh_user"] }}
+server{{ loop.index }} ansible_ssh_pass={{ servindx["ansible_ssh_pass"] }}
+server{{ loop.index }} ansible_sudo_pass={{ servindx["ansible_sudo_pass"] }}
+{% endfor %}

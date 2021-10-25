@@ -1,0 +1,43 @@
+- name: "Installing Docker on CentOS host"
+  hosts:
+{% for servindx in servlist %}
+  - server{{ loop.index }}
+{% endfor %}
+  remote_user: "{{ username }}"
+  become: "yes"
+  become_method: "sudo"
+  become_user: "root"
+  tasks:
+    - name: "STEP 1 - Remove older versions of Docker packages"
+      yum:
+        name:
+          - "docker"
+          - "docker-client"
+          - "docker-client-latest"
+          - "docker-common"
+          - "docker-latest"
+          - "docker-latest-logrotate"
+          - "docker-logrotate"
+          - "docker-engine"
+        state: "absent"
+    - name: "STEP 2 - Install yum-utils"
+      yum:
+        name:
+          - "yum-utils"
+        state: "present"
+    - name: "STEP 3 - Enable official Docker CE repository"
+      shell: "yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo"
+      args:
+        creates: "/etc/yum.repos.d/docker-ce.repo"
+    - name: "STEP 4 - Install Docker packages"
+      yum:
+        name:
+          - "docker-ce"
+          - "docker-ce-cli"
+          - "containerd.io"
+        state: "present"
+    - name: "STEP 5 - Enable and start the Docker service"
+      ansible.builtin.systemd:
+        name: "docker"
+        state: "started"
+        enabled: "yes"
