@@ -1,26 +1,29 @@
 - name: "Setting up OpenProject Docker on CentOS host"
   hosts: "{{ hostaddr }}"
   remote_user: "{{ username }}"
-  become: yes
+  become: "yes"
   become_method: "sudo"
   become_user: "root"
   tasks:
-    - name: "STEP 1 - Install python3-docker on the remote machine first"
+    - name: "STEP 1 - Install python3-pip on the remote machine"
       dnf:
-        name: "python3-docker"
+        name: "python3-pip"
         state: "latest"
-    - name: "STEP 2 - Pull openproject/community:11 from DockerHub"
+    - name: "STEP 2 - Install docker-py using pip"
+      pip:
+        name: "docker-py"
+    - name: "STEP 3 - Pull openproject/community:11 from DockerHub"
       community.docker.docker_image:
         name: "openproject/community:11"
         source: "pull"
-    - name: "STEP 3 - Make directories for storing OpenProject data"
+    - name: "STEP 4 - Make directories for storing OpenProject data"
       file:
         path: "{{ openpjct_pgdata }}"
         state: "directory"
       file:
         path: "{{ openpjct_assets }}"
         state: "directory"
-    - name: "STEP 4 - Configure and start the OpenProject container"
+    - name: "STEP 5 - Configure and start the OpenProject container"
       community.docker.docker_container:
         name: "{{ openpjct_hostname }}"
         image: "openproject/community:11"
@@ -32,3 +35,11 @@
           - "{{ openpjct_assets }}:/var/openproject/assets"
         env:
           SECRET_KEY_BASE: "{{ passhash }}"
+    - name: "STEP 6 - Remove docker-py using pip"
+      pip:
+        name: "docker-py"
+        state: "absent"
+    - name: "STEP 7 - Remove python3-pip from the remote machine"
+      dnf:
+        name: "python3-pip"
+        state: "absent"
