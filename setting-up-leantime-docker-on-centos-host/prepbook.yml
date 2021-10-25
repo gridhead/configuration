@@ -5,9 +5,9 @@
     username: "root"
     servlist: [
       {
-        "ansible_host": "192.168.0.114",
-        "ansible_port": "2323",
-        "ansible_ssh_user": "root",
+        "ansible_host": "192.168.29.152",
+        "ansible_port": "22",
+        "ansible_ssh_user": "centos8s-slvb",
         "ansible_ssh_pass": "password",
         "ansible_sudo_pass": "password"
       }
