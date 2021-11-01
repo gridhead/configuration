@@ -1,0 +1,31 @@
+- name: "Establish template"
+  hosts: "127.0.0.1"
+  vars:
+    hostaddr: "server1"
+    username: "root"
+    servlist: [
+      {
+        "ansible_host": "192.168.29.152",
+        "ansible_port": "22",
+        "ansible_ssh_user": "centos8s-slvb",
+        "ansible_ssh_pass": "password",
+        "ansible_sudo_pass": "password"
+      }
+    ]
+    lxsvdlug_conf: "/home/centos8s-slvb/data/deluge/config"
+    lxsvdlug_data: "/home/centos8s-slvb/data/deluge/downloads"
+    lxsvdlug_hostname: "deluge"
+    lxsvdlug_webp: "8112"
+    lxsvdlug_rpct: "6881"
+    lxsvdlug_rpcu: "6881"
+    lxsvdlug_timezone: "Asia/Kolkata"
+    lxsvdlug_loglevel: "error"
+  tasks:
+    - name: "Setting the variables in the playbook template"
+      template:
+        src: "trap.template.j2"
+        dest: "trapplay.yml"
+    - name: "Setting the variables in the inventory template"
+      template:
+        src: "invt.template.j2"
+        dest: "register.ini"
