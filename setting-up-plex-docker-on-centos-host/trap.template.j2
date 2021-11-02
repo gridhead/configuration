@@ -1,0 +1,56 @@
+- name: "Setting up Plex Docker on CentOS host"
+  hosts: "{{ hostaddr }}"
+  remote_user: "{{ username }}"
+  become: yes
+  become_method: "sudo"
+  become_user: "root"
+  tasks:
+    - name: "STEP 1 - Install EPEL repositories on the remote machine"
+      dnf:
+        name: "epel-release"
+        state: "latest"
+    - name: "STEP 2 - Install python3-docker on the remote machine"
+      dnf:
+        name: "python3-docker"
+        state: "latest"
+    - name: "STEP 3 - Pull linuxserver/plex:latest from DockerHub"
+      community.docker.docker_image:
+        name: "linuxserver/plex:latest"
+        source: "pull"
+    - name: "STEP 4 - Make directories for storing Plex configuration"
+      file:
+        path: "{{ lxsvplex_libr }}"
+        state: "directory"
+    - name: "STEP 5 - Make directories for storing TV series in Plex library"
+      file:
+        path: "{{ lxsvplex_tvsr }}"
+        state: "directory"
+    - name: "STEP 6 - Make directories for storing movies in Plex library"
+      file:
+        path: "{{ lxsvplex_movs }}"
+        state: "directory"
+    - name: "STEP 7 - Configure and start the Plex container"
+      community.docker.docker_container:
+        name: "{{ lxsvplex_hostname }}"
+        image: "linuxserver/plex:latest"
+        restart_policy: "always"
+        ports:
+          - "{{ lxsvplex_webp }}:32400/tcp"
+          - "{{ lxsvplex_tcp1 }}:3005/tcp"
+          - "{{ lxsvplex_tcp2 }}:8324/tcp"
+          - "{{ lxsvplex_tcp3 }}:32469/tcp"
+          - "{{ lxsvplex_udp1 }}:1900/udp"
+          - "{{ lxsvplex_udp2 }}:32410/udp"
+          - "{{ lxsvplex_udp3 }}:32412/udp"
+          - "{{ lxsvplex_udp4 }}:32413/udp"
+          - "{{ lxsvplex_udp5 }}:32414/udp"
+        env:
+          PUID: "1000"
+          PGID: "1000"
+          TZ: "{{ lxsvplex_timezone }}"
+          VERSION: "docker"
+          PLEX_CLAIM: "{{ lxsvplex_authcode }}"
+    - name: "STEP 8 - Remove python3-docker from the remote machine"
+      dnf:
+        name: "python3-docker"
+        state: "absent"

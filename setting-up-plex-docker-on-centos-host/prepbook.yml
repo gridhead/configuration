@@ -1,0 +1,38 @@
+- name: "Establish template"
+  hosts: "127.0.0.1"
+  vars:
+    hostaddr: "server1"
+    username: "root"
+    servlist: [
+      {
+        "ansible_host": "192.168.29.152",
+        "ansible_port": "22",
+        "ansible_ssh_user": "centos8s-slvb",
+        "ansible_ssh_pass": "password",
+        "ansible_sudo_pass": "password"
+      }
+    ]
+    lxsvplex_libr: "/home/centos8s-slvb/data/plex/library"
+    lxsvplex_tvsr: "/home/centos8s-slvb/hard/multimedia/tvseries"
+    lxsvplex_movs: "/home/centos8s-slvb/hard/multimedia/movies"
+    lxsvplex_hostname: "plex"
+    lxsvplex_webp: "32400/tcp"
+    lxsvplex_tcp1: "3005/tcp"
+    lxsvplex_tcp2: "8324/tcp"
+    lxsvplex_tcp3: "32469/tcp"
+    lxsvplex_udp1: "1900/udp"
+    lxsvplex_udp2: "32410/udp"
+    lxsvplex_udp3: "32412/udp"
+    lxsvplex_udp4: "32413/udp"
+    lxsvplex_udp5: "32414/udp"
+    lxsvplex_timezone: "Asia/Kolkata"
+    lxsvplex_authcode: "claim-XXXXXXXXXXXXXXXXXXXX"
+  tasks:
+    - name: "Setting the variables in the playbook template"
+      template:
+        src: "trap.template.j2"
+        dest: "trapplay.yml"
+    - name: "Setting the variables in the inventory template"
+      template:
+        src: "invt.template.j2"
+        dest: "register.ini"
