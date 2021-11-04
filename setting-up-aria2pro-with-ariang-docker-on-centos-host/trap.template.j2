@@ -1,0 +1,64 @@
+- name: "Setting up Aria2-Pro with AriaNg Docker on CentOS host"
+  hosts: "{{ hostaddr }}"
+  remote_user: "{{ username }}"
+  become: "yes"
+  become_method: "sudo"
+  become_user: "root"
+  tasks:
+    - name: "STEP 1 - Install EPEL repositories on the remote machine"
+      dnf:
+        name: "epel-release"
+        state: "latest"
+    - name: "STEP 2 - Install python3-docker on the remote machine"
+      dnf:
+        name: "python3-docker"
+        state: "latest"
+    - name: "STEP 3 - Pull p3terx/aria2-pro:latest from DockerHub"
+      community.docker.docker_image:
+        name: "p3terx/aria2-pro:latest"
+        source: "pull"
+    - name: "STEP 4 - Pull p3terx/ariang:latest from DockerHub"
+      community.docker.docker_image:
+        name: "p3terx/aria2-pro:latest"
+        source: "pull"
+    - name: "STEP 5 - Make directories for storing Aria2-Pro configuration and downloads"
+      file:
+        path: "{{ p3txar2p_conf }}"
+        state: "directory"
+      file:
+        path: "{{ p3txar2p_data }}"
+        state: "directory"
+    - name: "STEP 6 - Configure and start the Aria2-Pro container"
+      community.docker.docker_container:
+        name: "{{ p3txar2p_hostname }}"
+        image: "p3terx/aria2-pro:latest"
+        restart_policy: "always"
+        ports:
+          - "{{ p3txar2p_rpcp }}:6800"
+          - "{{ p3txar2p_lspt }}:6888/tcp"
+          - "{{ p3txar2p_lspt }}:6888/udp"
+        volumes:
+          - "{{ p3txar2p_conf }}:/config"
+          - "{{ p3txar2p_data }}:/downloads"
+        env:
+          PUID: "1000"
+          PGID: "1000"
+          UMASK_SET: "022"
+          RPC_SECRET: "{{ p3txar2p_rpcspass }}"
+          RPC_PORT: "{{ p3txar2p_rpcp }}"
+          LISTEN_PORT: "{{ p3txar2p_lspt }}"
+        log_options:
+          max-size: "{{ p3txar2p_lval }}"
+    - name: "STEP 7 - Configure and start the AriaNg container"
+      community.docker.docker_container:
+        name: "{{ p3txarng_hostname }}"
+        image: "p3terx/ariang:latest"
+        restart_policy: "always"
+        ports:
+          - "{{ p3txarng_webp }}:6880"
+        log_options:
+          max-size: "{{ p3txarng_lval }}"
+    - name: "STEP 8 - Remove python3-docker from the remote machine"
+      dnf:
+        name: "python3-docker"
+        state: "absent"
