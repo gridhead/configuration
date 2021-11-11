@@ -1,0 +1,33 @@
+- name: "Establish template"
+  hosts: "127.0.0.1"
+  vars:
+    hostaddr: "server1"
+    username: "root"
+    servlist: [
+      {
+        "ansible_host": "192.168.29.152",
+        "ansible_port": "22",
+        "ansible_ssh_user": "centos8s-slvb",
+        "ansible_ssh_pass": "password",
+        "ansible_sudo_pass": "password"
+      }
+    ]
+    p3txar2p_conf: "/home/centos8s-slvb/data/aria2/config"
+    p3txar2p_data: "/home/centos8s-slvb/data/aria2/downloads"
+    p3txar2p_hostname: "aria2-pro"
+    p3txar2p_rpcp: "6800"
+    p3txar2p_lspt: "6881"
+    p3txar2p_rpcspass: "centos8s-slvb"
+    p3txar2p_lval: "1m"
+    p3txarng_hostname: "ariang"
+    p3txarng_webp: "6880"
+    p3txarng_lval: "1m"
+  tasks:
+    - name: "Setting the variables in the playbook template"
+      template:
+        src: "trap.template.j2"
+        dest: "trapplay.yml"
+    - name: "Setting the variables in the inventory template"
+      template:
+        src: "invt.template.j2"
+        dest: "register.ini"
